@@ -6,27 +6,27 @@
  * @buff_count: index of dst where the R of %R is
  * Return: New index
  */
-int parse_R13(char *buff_dest, va_list arg, int buff_count)
+int print_rot13(va_list R)
 {
-	char *str;
-	char *keys = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
-	char *keynew = "nopqrstuvwxyzabcdefghijklmNOPQRSTUVWXYZABCDEFGHIJKLM";
-	int i, j = 0;
+	int j, i, count = 0;
+	char *r;
+	char input[] = "ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyz";
+	char output[] = "NOPQRSTUVWXYZABCDEFGHIJKLM nopqrstuvwxyzabcdefghijklm";
 
-	str = va_arg(arg, char *);
-	while (str[j])
+	r = va_arg(R, char *);
+	if (r == NULL)
+		r = "(null)";
+	for (j = 0; r[j] != '\0'; j++)
 	{
-		for (i = 0; keys[i]; i++)
+		for (i = 0; input[i] != '\0'; i++)
 		{
-			if (str[j] == keys[i])
+			if (r[j] == input[i])
 			{
-				buff_dest[buff_count] = keynew[i];
+				_putchar(output[i]);
+				count++;
 				break;
 			}
-			buff_dest[buff_count] = str[j];
 		}
-		j++, buff_count++;
 	}
-
-	return (buff_count);
+	return (count);
 }
