@@ -6,7 +6,7 @@
  * @buff_count: index of dst where the R of %R is
  * Return: New index
  */
-int print_rot13(va_list R)
+int parse_R13(va_list R)
 {
 	int j, i, count = 0;
 	char *r;
