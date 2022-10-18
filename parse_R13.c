@@ -1,5 +1,4 @@
 #include "main.h"
-
 /**
  * parse_R13 - substitute %R by argument number in rot13
  * @buff_dest: string to change
