@@ -1,78 +1,48 @@
-#include <stdarg.h>
-#include <unistd.h>
 #include "main.h"
 /**
-  * find_function - function that finds formats for _printf
-  * calls the corresponding function.
-  * @format: format (char, string, int, decimal)
-  * Return: NULL or function associated ;
-  */
-int (*find_function(const char *format))(va_list)
-{
-	unsigned int i = 0;
-	code_f find_f[] = {
-		{"c", print_char},
-		{"s", print_string},
-		{"i", print_int},
-		{"d", print_dec},
-		{"r", print_rev},
-		{"b", print_bin},
-		{"u", print_unsig},
-		{"o", print_octal},
-		{"x", print_x},
-		{"X", print_X},
-		{"R", print_rot13},
-		{NULL, NULL}
-	};
-
-	while (find_f[i].sc)
-	{
-		if (find_f[i].sc[0] == (*format))
-			return (find_f[i].f);
-		i++;
-	}
-	return (NULL);
-}
-/**
-  * _printf - function that produces output according to a format.
-  * @format: format (char, string, int, decimal)
-  * Return: size the output text;
-  */
+ * _printf - formatted output conversion and print data.
+ * @format: input string.
+ *
+ * Return: number of chars printed.
+ */
 int _printf(const char *format, ...)
 {
-	va_list ap;
-	int (*f)(va_list);
-	unsigned int i = 0, cprint = 0;
-
-	if (format == NULL)
+	int i = 0, j = 0, buff_count = 0, prev_buff_count = 0;
+	char buffer[2000];
+	va_list arg;
+	call_t container[] = {
+		{'c', parse_char}, {'s', parse_str}, {'i', parse_int}, {'d', parse_int},
+		{'%', parse_perc}, {'b', parse_bin}, {'o', parse_oct}, {'x', parse_hex},
+		{'X', parse_X}, {'u', parse_uint}, {'R', parse_R13}, {'r', parse_rev},
+		{'\0', NULL}
+	};
+	if (!format)
 		return (-1);
-	va_start(ap, format);
-	while (format[i])
+	va_start(arg, format);
+	while (format && format[i] != '\0')
 	{
-		while (format[i] != '%' && format[i])
+		if (format[i] == '%')
 		{
-			_putchar(format[i]);
-			cprint++;
-			i++;
+			i++, prev_buff_count = buff_count;
+			for (j = 0; container[j].t != '\0'; j++)
+			{
+				if (format[i] == '\0')
+					break;
+				if (format[i] == container[j].t)
+				{
+					buff_count = container[j].f(buffer, arg, buff_count);
+					break;
+				}
+			}
+			if (buff_count == prev_buff_count && format[i])
+				i--, buffer[buff_count] = format[i], buff_count++;
 		}
-		if (format[i] == '\0')
-			return (cprint);
-		f = find_function(&format[i + 1]);
-		if (f != NULL)
-		{
-			cprint += f(ap);
-			i += 2;
-			continue;
-		}
-		if (!format[i + 1])
-			return (-1);
-		_putchar(format[i]);
-		cprint++;
-		if (format[i + 1] == '%')
-			i += 2;
 		else
-			i++;
+			buffer[buff_count] = format[i], buff_count++;
+		i++;
 	}
-	va_end(ap);
-	return (cprint);
+	va_end(arg);
+	buffer[buff_count] = '\0';
+	print_buff(buffer, buff_count);
+	return (buff_count);
 }
