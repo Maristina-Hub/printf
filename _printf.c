@@ -16,7 +16,6 @@ int _printf(const char *format, ...)
 		{'X', parse_X}, {'u', parse_uint}, {'R', parse_R13}, {'r', parse_rev},
 		{'\0', NULL}
 	};
-
 	if (!format)
 		return (-1);
 	va_start(arg, format);
